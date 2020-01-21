@@ -9,11 +9,11 @@ c.execute("""CREATE TABLE server(
     os text,
     memory text,
     cpu text,
-    cpucores text,
+    cpuCores text,
     gpu text,
     model text,
     foreign key (rackID) references rack(rackID),
-    foreign key (serverTypeID) references servertype(typeID)
+    foreign key (serverTypeID) references serverType(typeID)
     )""")
 c.execute("""CREATE TABLE rack(
     rackID text primary key,
@@ -26,7 +26,7 @@ c.execute("""CREATE TABLE location(
     buildingNumber text, 
     room text
 )""")
-c.execute("""CREATE TABLE servertype(
+c.execute("""CREATE TABLE serverType(
     typeID text primary key,
     typeName text
     )""")
@@ -56,7 +56,7 @@ c.execute("""CREATE TABLE database(
     serverId text,
     foreign key (serverId) references server(serverId)
     )""")
-c.execute("""CREATE TABLE runningjob(
+c.execute("""CREATE TABLE runningJob(
     coresAllocated text,
     reservedTime text,
     serverID text,
@@ -64,7 +64,7 @@ c.execute("""CREATE TABLE runningjob(
     jobName text, 
     startTime text,
     foreign key (serverID) references server(serverID)
-    constraint runningjob_pk primary key(serverID, user, jobName, startTime)
+    constraint runningJob_pk primary key(serverID, user, jobName, startTime)
     )""")
 conn.commit()
 conn.close()
