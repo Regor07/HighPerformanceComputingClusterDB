@@ -78,18 +78,24 @@ tempOs= input['Os']
 tempCpuCores= input['CpuCores']
 tempCpu= input['Cpu']
 tempModel= input['Model']
-#c.execute("""insert into server(serverId,servername, gpu,memory,os,cpucores,cpu,model) values(?,?,?,?,?,?,?,?)""",(tempserverId,tempserverName,tempGpu,tempMemory,tempOs,tempCpuCores,tempCpu,tempModel))
+c.execute("""insert into server(serverId,servername, gpu,memory,os,cpucores,cpu,model,serverTypeID,rackID) values(?,?,?,?,?,?,?,?,?,?)""",(tempserverId,tempserverName,tempGpu,tempMemory,tempOs,tempCpuCores,tempCpu,tempModel,input['ServerType']['TypeID'],input['Rack']['RackID']))
+c.execute("""insert into rack(rackID,name,locationID) values(?,?,?)""",(input['Rack']['RackID'],input['Rack']['Name'],input['Rack']['Location']['LocationID']))
+c.execute("""insert into location(locationID,buildingNumber,room) values (?,?,?)""", (input['Rack']['Location']['LocationID'],input['Rack']['Location']['BuildingNumber'],input['Rack']['Location']['Room']))
+c.execute("""insert into metric(metricID,Time,cpu,gpu,disk,ram,pingLatency,serverId) values(?,?,?,?,?,?,?,?)""",(input['Metric']['MetricId'],input['Metric']['Time'],input['Metric']['Cpu'],input['Metric']['Gpu'],input['Metric']['Disk'],input['Metric']['Ram'],input['Metric']['PingLatency'],tempserverId))
+c.execute("""insert into servertype(typeName,typeID) values(?,?)""",(input['ServerType']['TypeName'],input['ServerType']['TypeID']))
+
+for runningjob in input['RunningJobs']:
+    c.execute("""insert into runningjob(user,jobName,startTime,coresAllocatedreservedTime,serverID) values(?,?,?,?,?,?)""",(runningjob['RunningJobs']['User']),runningjob['RunningJobs']['JobName'],runningjob['RunningJobs']['StartTime'],runningjob['RunningJobs']['CoresAllocated'],runningjob['RunningJobs']['ReservedTime'],tempserverId)
 for database in input['Databases']:
     tempddbId= database['DatabaseId']
     tempInput=database['DatabaseName']
     tempStatus=database['Status']
     c.execute("""insert into database(databaseID, databaseName,status,serverId) values (?,?,?,?)""",(tempddbId,tempInput,tempStatus,tempserverId))
-# c.execute("""CREATE TABLE database(
-#     databaseID text primary key,
-#     databaseName text,
-#     status text,
-#     serverId text,
-#     foreign key (serverId) references server(serverId)
-#     )""")
+for service in input['Services']:
+    tempserviceID= service['ServiceID']
+    tempServiceName= service['ServiceName']
+    tempserviceStatus= service['Status']
+    c.execute("""insert into service(serviceID, serviceName,status,serverId) values (?,?,?,?)""", (tempserviceID,tempServiceName,tempserviceStatus,tempserverId))
+
 conn.commit()
 conn.close()
