@@ -78,14 +78,18 @@ tempOs= input['Os']
 tempCpuCores= input['CpuCores']
 tempCpu= input['Cpu']
 tempModel= input['Model']
-c.execute("""insert into server(serverId,servername, gpu,memory,os,cpucores,cpu,model) values(?,?,?,?,?,?,?,?)""",(tempserverId,tempserverName,tempGpu,tempMemory,tempOs,tempCpuCores,tempCpu,tempModel))
-# c.execute("""insert into server (serverId) values (?)""",(tempserverId,),)
-# c.execute("""insert into server (servername) values (?) where serverId = tempserverId""",(tempserverName,),)
-# c.execute("""insert into server (gpu) values (?)""",(tempGpu,),)
-# c.execute("""insert into server (memory) values (?)""",(tempMemory,),)
-# c.execute("""insert into server (os) values (?)""",(tempOs,),)
-# c.execute("""insert into server (cpucores) values (?)""",(tempCpuCores,),)
-# c.execute("""insert into server (cpu) values (?)""",(tempCpu,),)
-# c.execute("""insert into server (model) values (?)""",(tempModel,),)
+#c.execute("""insert into server(serverId,servername, gpu,memory,os,cpucores,cpu,model) values(?,?,?,?,?,?,?,?)""",(tempserverId,tempserverName,tempGpu,tempMemory,tempOs,tempCpuCores,tempCpu,tempModel))
+for database in input['Databases']:
+    tempddbId= database['DatabaseId']
+    tempInput=database['DatabaseName']
+    tempStatus=database['Status']
+    c.execute("""insert into database(databaseID, databaseName,status,serverId) values (?,?,?,?)""",(tempddbId,tempInput,tempStatus,tempserverId))
+# c.execute("""CREATE TABLE database(
+#     databaseID text primary key,
+#     databaseName text,
+#     status text,
+#     serverId text,
+#     foreign key (serverId) references server(serverId)
+#     )""")
 conn.commit()
 conn.close()
