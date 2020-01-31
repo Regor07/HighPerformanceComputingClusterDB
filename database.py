@@ -1,6 +1,9 @@
 import _sqlite3
 import json
-
+import os
+samplelist = os.listdir('C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons')
+for item in samplelist:
+    print(item)
 conn = _sqlite3.connect('servers.db')
 c = conn.cursor()
 # c.execute("""CREATE TABLE Server(
@@ -71,54 +74,109 @@ c = conn.cursor()
 #     foreign key (ServerId) references Server(ServerId)
 #     constraint RunningJob_pk primary key(ServerId, User, JobName, StartTime)
 #     )""")
-with open("C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Jsons\\Db-01.json") as data:
-    input = json.load(data)
+import os
+samplelist = os.listdir('C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons')
+for item in samplelist:
+    dingle=item
+    with open("C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons\\"+dingle) as data:
+        input = json.load(data)
 
-tempServerId = input['ServerId']
-tempServerName = input['ServerName']
-tempGpu = input['Gpu']
-tempMemory = input['Memory']
-tempOs = input['Os']
-tempCpuCores = input['CpuCores']
-tempCpu = input['Cpu']
-tempModel = input['Model']
-c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
-RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
-                                         tempCpuCores,
-                                         tempCpu, tempModel, input['ServerType']['TypeId'],
-                                         input['Rack']['RackId']))
-c.execute("""insert into Rack(RackId, Name, LocationId) values(?,?,?)""", (input['Rack']['RackId'],
-                                                                           input['Rack']['Name'],
-                                                                           input['Rack']['Location']['LocationId']))
-c.execute("""insert into Location(LocationId, BuildingNumber, Room) values (?,?,?)""", (
-    input['Rack']['Location']['LocationId'], input['Rack']['Location']['BuildingNumber'],
-    input['Rack']['Location']['Room']))
-c.execute("""insert into Metric(MetricId, Time, Cpu, Gpu, PartA, PartB, PartC, PartD, Disk, Ram, PingLatency,
-ServerId) values(?,?,?,?,?,?,?,?,?,?,?,?)""", (input['Metric']['MetricId'], input['Metric']['Time'],
-                                               input['Metric']['Cpu'], input['Metric']['Gpu'], input['Metric']['PartA'],
-                                               input['Metric']['PartB'], input['Metric']['PartC'],
-                                               input['Metric']['PartD'], input['Metric']['Disk'],input['Metric']['Ram'],
-                                               input['Metric']['PingLatency'], tempServerId))
-c.execute("""insert into ServerType(TypeName, TypeId) values(?,?)""",
-          (input['ServerType']['TypeName'], input['ServerType']['TypeId']))
-for RunningJob in input['RunningJobs']:
-    c.execute(
-        """insert into RunningJob(User, JobName, StartTime, CoresAllocatedReservedTime, serverID) values(?,?,?,?,?,?)""",
-        (RunningJob['RunningJobs']['User']), RunningJob['RunningJobs']['JobName'],
-        RunningJob['RunningJobs']['StartTime'], RunningJob['RunningJobs']['CoresAllocated'],
-        RunningJob['RunningJobs']['ReservedTime'], tempServerId)
-for Database in input['Databases']:
-    tempDbId = Database['DatabaseId']
-    tempInput = Database['DatabaseName']
-    tempStatus = Database['Status']
-    c.execute("""insert into Database(DatabaseId, DatabaseName, Status, ServerId) values (?,?,?,?)""",
-              (tempDbId, tempInput, tempStatus, tempServerId))
-for Service in input['Services']:
-    tempServiceId = Service['ServiceId']
-    tempServiceName = Service['ServiceName']
-    tempServiceStatus = Service['Status']
-    c.execute("""insert into Service(ServiceId, ServiceName, Status, ServerId) values (?,?,?,?)""",
-              (tempServiceId, tempServiceName, tempServiceStatus, tempServerId))
+    tempServerId = input['ServerId']
+    tempServerName = input['ServerName']
+    tempGpu = input['Gpu']
+    tempMemory = input['Memory']
+    tempOs = input['Os']
+    tempCpuCores = input['CpuCores']
+    tempCpu = input['Cpu']
+    tempModel = input['Model']
+    c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
+    RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
+                                             tempCpuCores,
+                                             tempCpu, tempModel, input['ServerType']['TypeId'],
+                                             input['Rack']['RackId']))
+    c.execute("""insert into Rack(RackId, Name, LocationId) values(?,?,?)""", (input['Rack']['RackId'],
+                                                                               input['Rack']['Name'],
+                                                                               input['Rack']['Location']['LocationId']))
+    c.execute("""insert into Location(LocationId, BuildingNumber, Room) values (?,?,?)""", (
+        input['Rack']['Location']['LocationId'], input['Rack']['Location']['BuildingNumber'],
+        input['Rack']['Location']['Room']))
+    c.execute("""insert into Metric(MetricId, Time, Cpu, Gpu, PartA, PartB, PartC, PartD, Disk, Ram, PingLatency,
+    ServerId) values(?,?,?,?,?,?,?,?,?,?,?,?)""", (input['Metric']['MetricId'], input['Metric']['Time'],
+                                                   input['Metric']['Cpu'], input['Metric']['Gpu'],
+                                                   input['Metric']['PartA'],
+                                                   input['Metric']['PartB'], input['Metric']['PartC'],
+                                                   input['Metric']['PartD'], input['Metric']['Disk'],
+                                                   input['Metric']['Ram'],
+                                                   input['Metric']['PingLatency'], tempServerId))
+    c.execute("""insert into ServerType(TypeName, TypeId) values(?,?)""",
+              (input['ServerType']['TypeName'], input['ServerType']['TypeId']))
+    for RunningJob in input['RunningJobs']:
+        c.execute(
+            """insert into RunningJob(User, JobName, StartTime, CoresAllocated,ReservedTime, serverID) values(?,?,?,?,?,?)""",
+            (RunningJob['User'], RunningJob['JobName'],
+            RunningJob['StartTime'], RunningJob['CoresAllocated'],
+            RunningJob['ReservedTime'], tempServerId))
+    for Database in input['Databases']:
+        tempDbId = Database['DatabaseId']
+        tempInput = Database['DatabaseName']
+        tempStatus = Database['Status']
+        c.execute("""insert into Database(DatabaseId, DatabaseName, Status, ServerId) values (?,?,?,?)""",
+                  (tempDbId, tempInput, tempStatus, tempServerId))
+    for Service in input['Services']:
+        tempServiceId = Service['ServiceId']
+        tempServiceName = Service['ServiceName']
+        tempServiceStatus = Service['Status']
+        c.execute("""insert into Service(ServiceId, ServiceName, Status, ServerId) values (?,?,?,?)""",
+                  (tempServiceId, tempServiceName, tempServiceStatus, tempServerId))
 
+# with open("C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons\\Db-01.json") as data:
+#     input = json.load(data)
+#
+# tempServerId = input['ServerId']
+# tempServerName = input['ServerName']
+# tempGpu = input['Gpu']
+# tempMemory = input['Memory']
+# tempOs = input['Os']
+# tempCpuCores = input['CpuCores']
+# tempCpu = input['Cpu']
+# tempModel = input['Model']
+# c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
+# RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
+#                                          tempCpuCores,
+#                                          tempCpu, tempModel, input['ServerType']['TypeId'],
+#                                          input['Rack']['RackId']))
+# c.execute("""insert into Rack(RackId, Name, LocationId) values(?,?,?)""", (input['Rack']['RackId'],
+#                                                                            input['Rack']['Name'],
+#                                                                            input['Rack']['Location']['LocationId']))
+# c.execute("""insert into Location(LocationId, BuildingNumber, Room) values (?,?,?)""", (
+#     input['Rack']['Location']['LocationId'], input['Rack']['Location']['BuildingNumber'],
+#     input['Rack']['Location']['Room']))
+# c.execute("""insert into Metric(MetricId, Time, Cpu, Gpu, PartA, PartB, PartC, PartD, Disk, Ram, PingLatency,
+# ServerId) values(?,?,?,?,?,?,?,?,?,?,?,?)""", (input['Metric']['MetricId'], input['Metric']['Time'],
+#                                                input['Metric']['Cpu'], input['Metric']['Gpu'], input['Metric']['PartA'],
+#                                                input['Metric']['PartB'], input['Metric']['PartC'],
+#                                                input['Metric']['PartD'], input['Metric']['Disk'],input['Metric']['Ram'],
+#                                                input['Metric']['PingLatency'], tempServerId))
+# c.execute("""insert into ServerType(TypeName, TypeId) values(?,?)""",
+#           (input['ServerType']['TypeName'], input['ServerType']['TypeId']))
+# for RunningJob in input['RunningJobs']:
+#     c.execute(
+#         """insert into RunningJob(User, JobName, StartTime, CoresAllocatedReservedTime, serverID) values(?,?,?,?,?,?)""",
+#         (RunningJob['RunningJobs']['User']), RunningJob['RunningJobs']['JobName'],
+#         RunningJob['RunningJobs']['StartTime'], RunningJob['RunningJobs']['CoresAllocated'],
+#         RunningJob['RunningJobs']['ReservedTime'], tempServerId)
+# for Database in input['Databases']:
+#     tempDbId = Database['DatabaseId']
+#     tempInput = Database['DatabaseName']
+#     tempStatus = Database['Status']
+#     c.execute("""insert into Database(DatabaseId, DatabaseName, Status, ServerId) values (?,?,?,?)""",
+#               (tempDbId, tempInput, tempStatus, tempServerId))
+# for Service in input['Services']:
+#     tempServiceId = Service['ServiceId']
+#     tempServiceName = Service['ServiceName']
+#     tempServiceStatus = Service['Status']
+#     c.execute("""insert into Service(ServiceId, ServiceName, Status, ServerId) values (?,?,?,?)""",
+#               (tempServiceId, tempServiceName, tempServiceStatus, tempServerId))
+#
 conn.commit()
 conn.close()
