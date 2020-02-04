@@ -15,16 +15,11 @@ for item in samplelist:
    # print(tempServerId)
     tempServerName = input['ServerName']
     tempGpu = input['Gpu']
-    testgpu = c.execute("""Select Gpu from Server where ServerId = '%s'"""% tempServerId)
+    testy = c.execute("""Select RackId from Rack where RackId = '%s'"""% input['Rack']['RackId'])
     result =c.fetchone()
-    tryingsomething=(tempGpu,)
     test= str(result[0])
-    print(test)
-    print(tempGpu)
-    if (result[0]==tempGpu):
-        print('match')
-    else:
-         print ('mismatch')
+    print (test)
+    c.execute("""delete from  Rack where RackId= '%s'"""%test)
   #  testgpu= c.execute("""Select gpu from server where serverId = tempServerId""")
 
     tempMemory = input['Memory']
