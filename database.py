@@ -74,6 +74,13 @@ c = conn.cursor()
 #     foreign key (ServerId) references Server(ServerId)
 #     constraint RunningJob_pk primary key(ServerId, User, JobName, StartTime)
 #     )""")
+# c.execute("""CREATE TABLE MasterList(
+#      Type text,
+#      Name text,
+#      num text,
+#      constraint MasterList_pk primary key(Type, Name)
+#      )""")
+
 import os
 samplelist = os.listdir('C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons')
 for item in samplelist:
