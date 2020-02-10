@@ -64,6 +64,12 @@ for item in samplelist:
     # set
     # Gpu='test'
     # where Gpu='Nvidia 1'""")
+    if isOnMasterList==True:
+        print(tempServerId+' was moved to the archive folder!')
+        shutil.move("C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons\\"+dingle,"C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Archive")
+    else:
+        print(tempServerId+' was moved to the spam folder!')
+        shutil.move("C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons\\"+dingle,"C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Spam")
 
 
 conn.commit()
