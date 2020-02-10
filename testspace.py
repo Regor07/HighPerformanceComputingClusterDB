@@ -2,6 +2,7 @@ import _sqlite3
 import json
 import os
 import shutil
+# def filter(string):
 samplelist = os.listdir('C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons')
 conn = _sqlite3.connect('servers.db')
 c = conn.cursor()
@@ -12,6 +13,26 @@ for item in samplelist:
         input = json.load(data)
 
     tempServerId = input['ServerId']
+    isOnMasterList = False
+    masterList=c.execute("select Name,num from masterList")
+    MLResult=c.fetchall()
+    i=0
+    for item in MLResult:
+        dingles=MLResult[i]
+        testNum=dingles[0]
+        testName=dingles[1]
+        testPhrase=testName+'-'+testNum
+        if (testPhrase==tempServerId):
+            print(tempServerId +' is on the masterlist')
+            isOnMasterList=True
+        #print(testPhrase)
+        i=i+1
+        #print(dingles)
+    if isOnMasterList==False:
+        print(tempServerId +' is not on the masterlist')
+    print(" ")
+
+
    # print(tempServerId)
     tempServerName = input['ServerName']
     tempGpu = input['Gpu']
@@ -28,8 +49,6 @@ for item in samplelist:
     tempCpu = input['Cpu']
     tempModel = input['Model']
     tempRackId= input['Rack']['RackId']
-    print(tempServerId)
-    #print(testgpu)
     c.execute("""update Server
     set
     Gpu= ?,
@@ -45,5 +64,7 @@ for item in samplelist:
     # set
     # Gpu='test'
     # where Gpu='Nvidia 1'""")
+
+
 conn.commit()
 conn.close()
