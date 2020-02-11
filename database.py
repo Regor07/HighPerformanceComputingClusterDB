@@ -1,11 +1,12 @@
 import _sqlite3
 import json
 import os
-samplelist = os.listdir('C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons')
-for item in samplelist:
-    print(item)
+# samplelist = os.listdir('C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons')
+# for item in samplelist:
+#     print(item)
 conn = _sqlite3.connect('servers.db')
 c = conn.cursor()
+# if c ('servers.db') is not null
 # c.execute("""CREATE TABLE Server(
 #     ServerId text primary key,
 #     ServerName text,
@@ -81,7 +82,6 @@ c = conn.cursor()
 #      constraint MasterList_pk primary key(Type, Name)
 #      )""")
 
-import os
 samplelist = os.listdir('C:\\Users\\hicks\\source\\repos\\JsonMockDataCreator\\Jsons')
 for item in samplelist:
     dingle=item
