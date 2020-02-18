@@ -25,6 +25,7 @@ for item in sampleList:
     tempServerId = input['ServerId']
     tempServerName = input['ServerName']
     tempServerTypeId = input['ServerType']['TypeId']
+    tempServerTypeName = input['ServerType']['TypeName']
     tempLocationId = input['Rack']['Location']['LocationId']
     isOnMasterList = False
     srvDoesExist = False
@@ -48,48 +49,50 @@ for item in sampleList:
     locList = c.execute("select LocationId from Location")
     LResult = c.fetchall()
     for item1 in MLResult:
-        dingles = MLResult[i]
-        testNum = dingles[0]
-        testName = dingles[1]
+        testNum = item1[0]
+        testName = item1[1]
         testPhrase = testName+'-'+testNum
         if testPhrase == tempServerId:
             # print(tempServerId + ' is on the Master List')
             isOnMasterList = True
-        i = i+1
     for item2 in SLResult:
-        if tempServerId == SLResult[j]:
+        if tempServerId == item2[0]:
             srvDoesExist = True
-        j = j+1
     for item3 in STResult:
-        if tempServerTypeId == STResult[k]:
+        if str(tempServerTypeId) == item3[0]:
             typDoesExist = True
-        k = k+1
     for item4 in RResult:
-        if tempRackId == RResult[l]:
+        if str(tempRackId) == item4[0]:
             rackDoesExist = True
-        l = l+1
     for item5 in LResult:
-        if tempLocationId == LResult[m]:
+        if str(tempLocationId) == item5[0]:
             locDoesExist = True
-        m = m+1
     if not isOnMasterList:
         print(" ")
         print(tempServerId + ' is not on the Master List')
 
     if not typDoesExist:
+        c.execute("""delete from ServerType where TypeId='%s'""" % tempServerTypeId)
         c.execute("""insert into ServerType(TypeId, TypeName) values(?,?)""",
-            (input['ServerType']['TypeId'], input['ServerType']['TypeName']))
+                  (input['ServerType']['TypeId'], input['ServerType']['TypeName']))
 
     if not rackDoesExist:
+        c.execute("""delete from Rack where RackId='%s'""" % tempRackId)
         c.execute("""insert into Rack(RackId, Name, LocationId) values(?,?,?)""", (input['Rack']['RackId'],
-            input['Rack']['Name'], input['Rack']['Location']['LocationId']))
+                                                                                   input['Rack']['Name'],
+                                                                                   input['Rack']['Location'][
+                                                                                       'LocationId']))
 
     if not locDoesExist:
+        c.execute("""delete from Location where LocationId='%s'""" % tempLocationId)
         c.execute("""insert into Location(LocationId, BuildingNumber, Room) values (?,?,?)""", (
             input['Rack']['Location']['LocationId'], input['Rack']['Location']['BuildingNumber'],
             input['Rack']['Location']['Room']))
 
     if isOnMasterList and not srvDoesExist:
+        # c.execute("""update Server set Gpu= ?, Memory= ?, Os=?, CpuCores=?, Cpu= ?, Model= ?, RackId= ? where serverId =
+        #          '%s'""" % tempServerId, (tempGpu, tempMemory, tempOs, tempCpuCores, tempCpu, tempModel, tempRackId))
+
         c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
             RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
                                                      tempCpuCores, tempCpu, tempModel, input['ServerType']['TypeId'],

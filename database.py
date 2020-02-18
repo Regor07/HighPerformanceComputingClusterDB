@@ -10,102 +10,102 @@ spamPath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Spam"
 conn = _sqlite3.connect('servers.db')
 c = conn.cursor()
 # if not os.path.isfile(serverPath + 'servers.db'):
-# c.execute("""CREATE TABLE Server(
-#     ServerId text primary key,
-#     ServerName text,
-#     RackID text,
-#     ServerTypeID text,
-#     Os text,
-#     Memory text,
-#     Cpu text,
-#     CpuCores text,
-#     Gpu text,
-#     Model text,
-#     foreign key (RackId) references Rack(RackId),
-#     foreign key (ServerTypeId) references ServerType(TypeId)
-#     )""")
-# c.execute("""CREATE TABLE Rack(
-#     RackId text primary key,
-#     Name text,
-#     LocationId text,
-#     foreign key(LocationId) references Location(LocationId)
-#     )""")
-# c.execute("""CREATE TABLE Location(
-#     LocationId text primary key,
-#     BuildingNumber text,
-#     Room text
-#     )""")
-# c.execute("""CREATE TABLE ServerType(
-#     TypeId text primary key,
-#     TypeName text
-#     )""")
-# c.execute("""CREATE TABLE Metric(
-#     MetricId text primary key,
-#     Time text,
-#     Cpu real,
-#     Ram real,
-#     PartA real,
-#     PartB real,
-#     PartC real,
-#     PartD real,
-#     Disk real,
-#     Gpu real,
-#     PingLatency real,
-#     ServerId text,
-#     foreign key (ServerId) references Server(ServerId)
-#     )""")
-# c.execute("""CREATE TABLE Service(
-#     ServiceId text,
-#     ServiceName text,
-#     Status text,
-#     ServerId text,
-#     foreign key (ServerId) references Server(ServerId)
-#     constraint Service_pk primary key(ServerId, ServiceId)
-#     )""")
-# c.execute("""CREATE TABLE Database(
-#     DatabaseId text,
-#     DatabaseName text,
-#     Status text,
-#     ServerId text,
-#     foreign key (ServerId) references Server(ServerId)
-#     constraint Database_pk primary key(ServerId, DatabaseId)
-#     )""")
-# c.execute("""CREATE TABLE RunningJob(
-#     CoresAllocated text,
-#     ReservedTime text,
-#     ServerId text,
-#     User text,
-#     JobName text,
-#     StartTime text,
-#     foreign key (ServerId) references Server(ServerId)
-#     constraint RunningJob_pk primary key(ServerId, User, JobName, StartTime)
-#     )""")
-# c.execute("""CREATE TABLE MasterList(
-#      Type text,
-#      Name text,
-#      num text,
-#      constraint MasterList_pk primary key(Type, Name)
-#      )""")
+c.execute("""CREATE TABLE Server(
+    ServerId text primary key,
+    ServerName text,
+    RackID text,
+    ServerTypeID text,
+    Os text,
+    Memory text,
+    Cpu text,
+    CpuCores text,
+    Gpu text,
+    Model text,
+    foreign key (RackId) references Rack(RackId),
+    foreign key (ServerTypeId) references ServerType(TypeId)
+    )""")
+c.execute("""CREATE TABLE Rack(
+    RackId text primary key,
+    Name text,
+    LocationId text,
+    foreign key(LocationId) references Location(LocationId)
+    )""")
+c.execute("""CREATE TABLE Location(
+    LocationId text primary key,
+    BuildingNumber text,
+    Room text
+    )""")
+c.execute("""CREATE TABLE ServerType(
+    TypeId text primary key,
+    TypeName text
+    )""")
+c.execute("""CREATE TABLE Metric(
+    MetricId text primary key,
+    Time datetime,
+    Cpu real,
+    Ram real,
+    PartA real,
+    PartB real,
+    PartC real,
+    PartD real,
+    Disk real,
+    Gpu real,
+    PingLatency real,
+    ServerId text,
+    foreign key (ServerId) references Server(ServerId)
+    )""")
+c.execute("""CREATE TABLE Service(
+    ServiceId text,
+    ServiceName text,
+    Status text,
+    ServerId text,
+    foreign key (ServerId) references Server(ServerId)
+    constraint Service_pk primary key(ServerId, ServiceId)
+    )""")
+c.execute("""CREATE TABLE Database(
+    DatabaseId text,
+    DatabaseName text,
+    Status text,
+    ServerId text,
+    foreign key (ServerId) references Server(ServerId)
+    constraint Database_pk primary key(ServerId, DatabaseId)
+    )""")
+c.execute("""CREATE TABLE RunningJob(
+    CoresAllocated text,
+    ReservedTime text,
+    ServerId text,
+    User text,
+    JobName text,
+    StartTime text,
+    foreign key (ServerId) references Server(ServerId)
+    constraint RunningJob_pk primary key(ServerId, User, JobName, StartTime)
+    )""")
+c.execute("""CREATE TABLE MasterList(
+     Type text,
+     Name text,
+     num text,
+     constraint MasterList_pk primary key(Type, Name)
+     )""")
 
-samplelist = os.listdir(filePath)
-for item in samplelist:
-    dingle=item
-    with open(filePath+dingle) as data:
-        input = json.load(data)
-
-    tempServerId = input['ServerId']
-    tempServerName = input['ServerName']
-    tempGpu = input['Gpu']
-    tempMemory = input['Memory']
-    tempOs = input['Os']
-    tempCpuCores = input['CpuCores']
-    tempCpu = input['Cpu']
-    tempModel = input['Model']
-    c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
-    RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
-                                             tempCpuCores,
-                                             tempCpu, tempModel, input['ServerType']['TypeId'],
-                                             input['Rack']['RackId']))
+# samplelist = os.listdir(filePath)
+# for item in samplelist:
+#     dingle=item
+#     with open(filePath+dingle) as data:
+#         input = json.load(data)
+#
+#     tempServerId = input['ServerId']
+#     tempServerName = input['ServerName']
+#     tempGpu = input['Gpu']
+#     tempMemory = input['Memory']
+#     tempOs = input['Os']
+#     tempCpuCores = input['CpuCores']
+#     tempCpu = input['Cpu']
+#     tempModel = input['Model']
+#     c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
+#     RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
+#                                              tempCpuCores,
+#                                              tempCpu, tempModel, input['ServerType']['TypeId'],
+#                                              input['Rack']['RackId']))
 #     c.execute("""insert into Rack(RackId, Name, LocationId) values(?,?,?)""", (input['Rack']['RackId'],
 #                                                                                input['Rack']['Name'],
 #                                                                                input['Rack']['Location']['LocationId']))
