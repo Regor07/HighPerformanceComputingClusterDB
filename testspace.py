@@ -32,11 +32,6 @@ for item in sampleList:
     typDoesExist = False
     rackDoesExist = False
     locDoesExist = False
-    i = 0
-    j = 0
-    k = 0
-    l = 0
-    m = 0
 
     masterList = c.execute("select Name,num from masterList")
     MLResult = c.fetchall()
