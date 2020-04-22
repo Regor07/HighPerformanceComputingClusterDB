@@ -3,10 +3,10 @@ import json
 import os
 import shutil
 
-filePath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Jsons\\"
-archPath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Archive"
-spamPath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Spam"
-conn = _sqlite3.connect('servers.db')
+filePath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreatorNew\\Jsons\\"
+archPath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreatorNew\\Archive"
+spamPath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreatorNew\\Spam"
+conn = _sqlite3.connect('C:\\Users\\Roger\\PycharmProjects\\HighPerformanceComputingClusterDB\\FinalDatabase1Month.db')
 c = conn.cursor()
 sampleList = os.listdir(filePath)
 
@@ -33,7 +33,7 @@ for item in sampleList:
     rackDoesExist = False
     locDoesExist = False
 
-    masterList = c.execute("select Name,num from masterList")
+    masterList = c.execute("select Name, Num from masterList")
     MLResult = c.fetchall()
     servList = c.execute("select ServerId from Server")
     SLResult = c.fetchall()
@@ -85,9 +85,6 @@ for item in sampleList:
             input['Rack']['Location']['Room']))
 
     if isOnMasterList and not srvDoesExist:
-        # c.execute("""update Server set Gpu= ?, Memory= ?, Os=?, CpuCores=?, Cpu= ?, Model= ?, RackId= ? where serverId =
-        #          '%s'""" % tempServerId, (tempGpu, tempMemory, tempOs, tempCpuCores, tempCpu, tempModel, tempRackId))
-
         c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
             RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
                                                      tempCpuCores, tempCpu, tempModel, input['ServerType']['TypeId'],
@@ -98,11 +95,24 @@ for item in sampleList:
         c.execute("""update Server set Gpu= ?, Memory= ?, Os=?, CpuCores=?, Cpu= ?, Model= ?, RackId= ? where serverId =
          '%s'""" % tempServerId, (tempGpu, tempMemory, tempOs, tempCpuCores, tempCpu, tempModel, tempRackId))
 
-        c.execute("""insert into Metric(MetricId, Time, Cpu, Gpu, PartA, PartB, PartC, PartD, Disk, Ram, PingLatency,
-            ServerId) values(?,?,?,?,?,?,?,?,?,?,?,?)""",
+        c.execute("""insert into Metric(MetricId, Time, Cpu, Gpu, Disk, Ram, PingLatency, ServerId) values(?,?,?,?,?,?,?,?)""",
                   [input['Metric']['MetricId'], input['Metric']['Time'], input['Metric']['Cpu'], input['Metric']['Gpu'],
-                   input['Metric']['PartA'], input['Metric']['PartB'], input['Metric']['PartC'], input['Metric']['PartD'],
                    input['Metric']['Disk'], input['Metric']['Ram'], input['Metric']['PingLatency'], tempServerId])
+
+        for Partition in input['Partitions']:
+            tempPartId = Partition['PartitionId']
+            tempPartCap = Partition['Capacity']
+            tempPartUsage = Partition['Usage']
+            c.execute("""insert into Partition(PartitionId, Capacity, Usage, ServerId, Time) values (?,?,?,?,?)""",
+                      (tempPartId, tempPartCap, tempPartUsage, tempServerId, input['Metric']['Time']))
+
+        # c.execute("""delete from Partition where serverId='%s'""" % tempServerId)
+        # for Partition in input['Partitions']:
+        #     tempPartId = Partition['PartitionId']
+        #     tempPartCap = Partition['Capacity']
+        #     tempPartUsage = Partition['Usage']
+        #     c.execute("""insert into Partition(PartitionId, Capacity, Usage, ServerId) values (?,?,?,?)""",
+        #               (tempPartId, tempPartCap, tempPartUsage, tempServerId))
 
         c.execute("""delete from Database where serverId='%s'""" % tempServerId)
         for Database in input['Databases']:
@@ -122,7 +132,7 @@ for item in sampleList:
 
         c.execute("""delete from RunningJob where serverId='%s'""" % tempServerId)
         for RunningJob in input['RunningJobs']:
-            c.execute("""insert into RunningJob(User, JobName, StartTime, CoresAllocated,ReservedTime, serverID)
+            c.execute("""insert into RunningJob(User, JobName, StartTime, CoresAllocated, ReservedTime, ServerId)
             values(?,?,?,?,?,?)""", (RunningJob['User'], RunningJob['JobName'], RunningJob['StartTime'],
                                      RunningJob['CoresAllocated'], RunningJob['ReservedTime'], tempServerId))
         shutil.move(filePath + dingle, archPath)

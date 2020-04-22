@@ -7,14 +7,14 @@ filePath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Jsons\\"
 archPath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Archive"
 spamPath = "C:\\Users\\Roger\\source\\repos\\JsonMockDataCreator\\Spam"
 
-conn = _sqlite3.connect('servers.db')
+conn = _sqlite3.connect('FinalDatabase1Month.db')
 c = conn.cursor()
 # if not os.path.isfile(serverPath + 'servers.db'):
 c.execute("""CREATE TABLE Server(
     ServerId text primary key,
     ServerName text,
-    RackID text,
-    ServerTypeID text,
+    RackId text,
+    ServerTypeId text,
     Os text,
     Memory text,
     Cpu text,
@@ -41,18 +41,24 @@ c.execute("""CREATE TABLE ServerType(
     )""")
 c.execute("""CREATE TABLE Metric(
     MetricId text primary key,
-    Time datetime,
+    Time text,
     Cpu real,
     Ram real,
-    PartA real,
-    PartB real,
-    PartC real,
-    PartD real,
     Disk real,
     Gpu real,
     PingLatency real,
     ServerId text,
     foreign key (ServerId) references Server(ServerId)
+    )""")
+c.execute("""CREATE TABLE Partition(
+    PartitionId text,
+    Capacity text,
+    Usage text,
+    ServerId text,
+    Time text,
+    foreign key (ServerId) references Server(ServerId)
+    foreign key (Time) references Metric(Time)
+    constraint Partition_pk primary key(ServerId, PartitionId, Time)
     )""")
 c.execute("""CREATE TABLE Service(
     ServiceId text,
@@ -83,63 +89,9 @@ c.execute("""CREATE TABLE RunningJob(
 c.execute("""CREATE TABLE MasterList(
      Type text,
      Name text,
-     num text,
+     Num text,
      constraint MasterList_pk primary key(Type, Name)
      )""")
-
-# samplelist = os.listdir(filePath)
-# for item in samplelist:
-#     dingle=item
-#     with open(filePath+dingle) as data:
-#         input = json.load(data)
-#
-#     tempServerId = input['ServerId']
-#     tempServerName = input['ServerName']
-#     tempGpu = input['Gpu']
-#     tempMemory = input['Memory']
-#     tempOs = input['Os']
-#     tempCpuCores = input['CpuCores']
-#     tempCpu = input['Cpu']
-#     tempModel = input['Model']
-#     c.execute("""insert into Server(ServerId, ServerName, Gpu, Memory, Os, CpuCores, Cpu, Model, ServerTypeId,
-#     RackId) values(?,?,?,?,?,?,?,?,?,?)""", (tempServerId, tempServerName, tempGpu, tempMemory, tempOs,
-#                                              tempCpuCores,
-#                                              tempCpu, tempModel, input['ServerType']['TypeId'],
-#                                              input['Rack']['RackId']))
-#     c.execute("""insert into Rack(RackId, Name, LocationId) values(?,?,?)""", (input['Rack']['RackId'],
-#                                                                                input['Rack']['Name'],
-#                                                                                input['Rack']['Location']['LocationId']))
-#     c.execute("""insert into Location(LocationId, BuildingNumber, Room) values (?,?,?)""", (
-#         input['Rack']['Location']['LocationId'], input['Rack']['Location']['BuildingNumber'],
-#         input['Rack']['Location']['Room']))
-#     c.execute("""insert into Metric(MetricId, Time, Cpu, Gpu, PartA, PartB, PartC, PartD, Disk, Ram, PingLatency,
-#     ServerId) values(?,?,?,?,?,?,?,?,?,?,?,?)""", (input['Metric']['MetricId'], input['Metric']['Time'],
-#                                                    input['Metric']['Cpu'], input['Metric']['Gpu'],
-#                                                    input['Metric']['PartA'],
-#                                                    input['Metric']['PartB'], input['Metric']['PartC'],
-#                                                    input['Metric']['PartD'], input['Metric']['Disk'],
-#                                                    input['Metric']['Ram'],
-#                                                    input['Metric']['PingLatency'], tempServerId))
-#     c.execute("""insert into ServerType(TypeName, TypeId) values(?,?)""",
-#               (input['ServerType']['TypeName'], input['ServerType']['TypeId']))
-#     for RunningJob in input['RunningJobs']:
-#         c.execute(
-#             """insert into RunningJob(User, JobName, StartTime, CoresAllocated,ReservedTime, serverID) values(?,?,?,?,?,?)""",
-#             (RunningJob['User'], RunningJob['JobName'],
-#             RunningJob['StartTime'], RunningJob['CoresAllocated'],
-#             RunningJob['ReservedTime'], tempServerId))
-#     for Database in input['Databases']:
-#         tempDbId = Database['DatabaseId']
-#         tempInput = Database['DatabaseName']
-#         tempStatus = Database['Status']
-#         c.execute("""insert into Database(DatabaseId, DatabaseName, Status, ServerId) values (?,?,?,?)""",
-#                   (tempDbId, tempInput, tempStatus, tempServerId))
-#     for Service in input['Services']:
-#         tempServiceId = Service['ServiceId']
-#         tempServiceName = Service['ServiceName']
-#         tempServiceStatus = Service['Status']
-#         c.execute("""insert into Service(ServiceId, ServiceName, Status, ServerId) values (?,?,?,?)""",
-#                   (tempServiceId, tempServiceName, tempServiceStatus, tempServerId))
 
 conn.commit()
 conn.close()
